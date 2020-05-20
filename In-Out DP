@@ -1,0 +1,63 @@
+class Solution {
+public:
+    int In[10000]={0};
+    int Out[10000];
+    vector<int> V[10000];
+    int DFSIn(int u,int par)
+    {
+        for(int v:V[u])
+        {
+            if(v==par)
+                continue;
+            In[u]=max(In[u],1+DFSIn(v,u));
+        }
+        return In[u];
+    }
+    void DFSOut(int u,int par)
+    {
+        int mx1=-1,mx2=-1;
+        for(int v:V[u])
+        {
+            if(v==par)
+                continue;
+            if(In[v]>=mx1)
+            {
+                mx2=mx1;mx1=In[v];
+            }
+            else
+            {
+                mx2=max(mx2,In[v]);
+            }
+        }
+        for(int v:V[u])
+        {
+            if(v==par)
+                continue;
+            int use;
+            if(In[v]==mx1)
+                use=mx2;
+            else
+                use=mx1;
+            Out[v]=max(2+use,1+Out[u]);
+            DFSOut(v,u);
+        }
+        return;
+    }
+    vector<int> sumOfDistancesInTree(int n, vector<vector<int>>& edges) 
+    {
+        int i,j;
+        for(i=0;i<n-1;i++)
+        {
+            V[edges[i][0]].push_back(edges[i][1]);
+            V[edges[i][1]].push_back(edges[i][0]);
+        }
+        Out[0]=1;
+        vector<int> Ans(n);
+        DFSIn(0,-1);
+        for(i=0;i<n;i++)
+        {
+            Ans[i]=max(In[i],Out[i]);
+        }
+        return Ans;
+    }
+};
