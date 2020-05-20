@@ -1,3 +1,6 @@
+/*
+    This code is written fro finding the height of the tree from every node in O(N+M) which is just O(N) in case tree
+*/
 class Solution {
 public:
     int In[10000]={0};
