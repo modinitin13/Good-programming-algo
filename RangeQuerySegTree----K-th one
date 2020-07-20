@@ -1,0 +1,131 @@
+https://codeforces.com/edu/course/2/lesson/4/2/practice/contest/273278/problem/B
+#include <bits/stdc++.h>
+using namespace std;
+#define trace(...) __f(#__VA_ARGS__, __VA_ARGS__)
+template <typename Arg1>
+void __f(const char *name, Arg1 &&arg1) {
+    cerr << name << " : " << arg1 << endl;
+}
+template <typename Arg1, typename... Args>
+void __f(const char *names, Arg1 &&arg1, Args&&... args) {
+    const char *comma = strchr(names + 1, ',');
+    cerr.write(names, comma - names) << " : " << arg1 << " | ";
+    __f(comma + 1, args...);
+}
+#define int long long int
+#define ld long double
+#define pb push_back
+#define mp make_pair
+#define fi first
+#define se second
+#define MOD 1000000007
+#define mod 998244353
+#define bug cout<<"HY"<<endl
+#define boost ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
+#define numize(A) A.numize(unique(A.begin(), A.end()) - A.begin())
+typedef pair<int,int> P;
+int power(int a,int b)
+{
+    if(b==0)
+        return 1;
+    if(b%2==0)
+        return (power((a*a)%mod,b/2))%mod;
+    return (a*(power((a*a)%mod,b/2))%mod)%mod;
+}
+int modInv(int n)
+{
+    return power(n, MOD-2);
+}
+int nCr(int n, int r, int p=MOD)
+{
+   if (r==0)
+      return 1;
+    int Fact[n+1];
+    Fact[0] = 1;
+    for (int i=1 ; i<=n; i++)
+    {
+        Fact[i] = (Fact[i-1]*i)%p;
+    }
+    return (((Fact[n]* modInv(Fact[r])) % MOD) *(modInv(Fact[n-r]) % MOD)) % MOD;
+}
+double PI=3.14159265359;
+vector<int> SegTree;
+void Build(int node,int start,int end,int A[])
+{
+    if(start==end)
+    {
+        SegTree[node]=A[start];
+        return;
+    }
+    int mid=(start+end)/2;
+    Build(2*node+1,start,mid,A);
+    Build(2*node+2,mid+1,end,A);
+    SegTree[node]=SegTree[2*node+1]+SegTree[2*node+2];
+    return;
+}
+void Update(int node,int ind,int val,int start,int end)
+{
+    if(start==end)
+    {
+        SegTree[node]=val;
+        return;
+    }
+    int mid=(start+end)/2;
+    if(ind<=mid)
+        Update(2*node+1,ind,val,start,mid);
+    else
+        Update(2*node+2,ind,val,mid+1,end);
+    SegTree[node]=SegTree[2*node+1]+SegTree[2*node+2];
+    return;
+}
+int Query(int node,int cnt,int start,int end)
+{
+    if(start==end)
+    {
+        return start;
+    }
+    int mid=(start+end)/2;
+    int ans;
+    if(SegTree[2*node+1]<cnt)
+    {
+        cnt-=SegTree[2*node+1];
+        ans=Query(2*node+2,cnt,mid+1,end);
+    }
+    else
+    {
+        ans=Query(2*node+1,cnt,start,mid);
+    }
+    return ans;
+}
+int32_t main()
+{
+    boost;
+    int n,m,i;
+    cin>>n>>m;
+    int A[n];
+    for(i=0;i<n;i++)
+        cin>>A[i];
+    int size=1;
+    while(size<2*n)
+        size*=2;
+    SegTree.resize(size);
+    Build(0,0,n-1,A);
+    for(i=0;i<m;i++)
+    {
+        int a;
+        cin>>a;
+        if(a==1)
+        {
+            int ind;
+            cin>>ind;
+            A[ind]=abs(1-A[ind]);
+            Update(0,ind,A[ind],0,n-1);
+        }
+        else
+        {
+            int cnt;
+            cin>>cnt;
+            cout<<Query(0,cnt+1,0,n-1)<<endl;
+        }
+    }
+}
