@@ -1,0 +1,96 @@
+https://www.geeksforgeeks.org/articulation-points-or-cut-vertices-in-a-graph/
+https://www.spoj.com/problems/SUBMERGE/
+
+
+// Problem : Submerging Islands
+// Contest : SPOJ - Classical
+// URL : https://www.spoj.com/problems/SUBMERGE/
+// Memory Limit : 1536 MB
+// Time Limit : 1000 ms
+// Powered by CP Editor (https://github.com/cpeditor/cpeditor)
+
+#include <bits/stdc++.h>
+using namespace std;
+#define trace(...) __f(#__VA_ARGS__, __VA_ARGS__)
+template <typename Arg1>
+void __f(const char *name, Arg1 &&arg1) {
+    cerr << name << " : " << arg1 << endl;
+}
+template <typename Arg1, typename... Args>
+void __f(const char *names, Arg1 &&arg1, Args&&... args) {
+    const char *comma = strchr(names + 1, ',');
+    cerr.write(names, comma - names) << " : " << arg1 << " | ";
+    __f(comma + 1, args...);
+}
+#define int long long int
+#define ld long double
+#define pb push_back
+#define mp make_pair
+#define fi first
+#define se second
+#define MOD 1000000007
+#define mod 998244353
+#define bug cout<<"HY"<<endl
+#define boost ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
+#define numize(A) A.numize(unique(A.begin(), A.end()) - A.begin())
+typedef pair<int,int> P;
+int t=0;
+set<int> S;
+void DFS(int s,int par,vector<int> V[],vector<int> &Time)
+{
+	Time[s]=t++;
+	int m=1e9;
+	int cnt=0;
+	for(int ind:V[s])
+	{
+		if(ind==par || Time[ind]!=-1)
+		{
+			if(ind!=par)
+				m=min(m,Time[ind]);
+			continue;
+		}
+		cnt++;
+		DFS(ind,s,V,Time);
+		if(Time[ind]>=Time[s] && par!=-1)
+		{
+			S.insert(s);
+		}
+		m=min(m,Time[ind]);
+	}
+	if(cnt>1 && par==-1)
+	{
+		S.insert(s);
+	}
+	Time[s]=min(Time[s],m);
+	return;
+}
+void solve(int n,int m)
+{
+	int i;
+	vector<int> V[n];
+	for(i=0;i<m;i++)
+	{
+		int u,v;
+		cin>>u>>v;
+		u--;
+		v--;
+		V[u].pb(v);
+		V[v].pb(u);
+	}
+	vector<int> Time(n,-1);
+	DFS(0,-1,V,Time);
+	cout<<S.size()<<endl;
+}
+int32_t main()
+{
+    boost;
+    while(true)
+    {
+    	S.clear();
+		int n,m;
+		cin>>n>>m;
+		if(n==0 && m==0)
+			break;
+		solve(n,m);
+	}
+}
