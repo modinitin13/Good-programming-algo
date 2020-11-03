@@ -1,0 +1,46 @@
+https://practice.geeksforgeeks.org/problems/minimum-spanning-tree/1#
+https://www.geeksforgeeks.org/prims-minimum-spanning-tree-mst-greedy-algo-5/
+
+
+
+
+
+int spanningTree(int n, int E, vector<vector<int>> &graph) 
+{
+    int i,j;
+    vector<pair<int,int>> V[n];
+    int Dist[n];
+    for(i=0;i<n;i++)
+        Dist[i]=INT_MAX;
+    for(i=0;i<n;i++)
+        for(j=0;j<n;j++)
+            if(graph[i][j]!=INT_MAX)
+                V[i].push_back({graph[i][j],j});
+    Dist[0]=0;
+    priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
+    pq.push({0,0});
+    bool visited[n];
+    memset(visited,0,sizeof(visited));
+    int ans=0;
+    while(!pq.empty())
+    {
+        pair<int,int> p=pq.top();
+        pq.pop();
+        int s=p.second;
+        int ws=p.first;
+        if(visited[s])
+            continue;
+        visited[s]=true;
+        ans+=ws;
+        for( pair<int,int> p:V[s])
+        {
+            int ind=p.second;
+            if(!visited[ind] && Dist[ind]>p.first)
+            {
+                Dist[ind]=p.first;
+                pq.push(p);
+            }
+        }
+    }
+    return ans;
+}
